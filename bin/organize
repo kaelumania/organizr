@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "organizr"
+require "exifr"
+require 'optparse'
+
+options = {}
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: organize from to [options]"
+
+  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+
+  opts.on("-n", "--[no-]noop", "Does not copy files") do |v|
+    options[:noop] = v
+  end
+
+  opts.on("-f", "--[no-]force", "Will overwrite any file") do |v|
+    options[:force] = v
+  end
+
+  opts.on("-h", "--help", "Prints this help") do
+    puts opts
+    exit
+  end
+end
+args = parser.parse!
+
+unless args.count == 2
+  puts parser.help
+  exit
+end
+
+from, to = args
+
+Organizr::Runner
+  .new(copy: Organizr::Copy.new(options))
+  .call(from, to)
