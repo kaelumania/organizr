@@ -9,16 +9,24 @@ options = {}
 parser = OptionParser.new do |opts|
   opts.banner = "Usage: organize from to [options]"
 
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+  opts.on("-v", "--[no-]verbose", "Outputs more information") do |v|
     options[:verbose] = v
   end
 
-  opts.on("-n", "--[no-]noop", "Does not copy files") do |v|
+  opts.on("-m", "--[no-]move", "Move files instead of copy (much faster)") do |v|
+    options[:move] = v
+  end
+
+  opts.on("-n", "--[no-]noop", "Does not just a dry run") do |v|
     options[:noop] = v
   end
 
-  opts.on("-f", "--[no-]force", "Will overwrite any file") do |v|
+  opts.on("-f", "--[no-]force", "Will overwrite conflicting files") do |v|
     options[:force] = v
+  end
+
+  opts.on("-i", "--[no-]ignore", "Will ignore conflicting files") do |v|
+    options[:ignore] = v
   end
 
   opts.on("-h", "--help", "Prints this help") do
@@ -34,7 +42,8 @@ unless args.count == 2
 end
 
 from, to = args
+action = options[:move] ? Organizr::Move.new(options) : Organizr::Copy.new(options)
 
 Organizr::Runner
-  .new(copy: Organizr::Copy.new(options))
+  .new(action: action)
   .call(from, to)

@@ -1,9 +1,5 @@
 module Organizr
-  class Copy
-    # TODO parallel copy
-    # https://github.com/grosser/parallel
-    # https://github.com/chadrem/workers
-    #
+  class Move
     def self.call(src, dst)
       new.call(src, dst)
     end
@@ -17,7 +13,7 @@ module Organizr
     end
 
     def call(src, dst)
-      puts "Copy #{src} to #{dst}" if verbose || noop
+      puts "Move #{src} to #{dst}" if verbose || noop
       return if noop
 
       FileUtils.mkdir_p(File.dirname(dst))
@@ -30,7 +26,7 @@ module Organizr
         end
       end
 
-      FileUtils.cp(src, dst, preserve: true)
+      FileUtils.mv(src, dst, force: force, noop: noop, verbose: verbose)
     end
   end
 end

@@ -9,12 +9,16 @@ module Organizr
 
       Enumerator.new do |yielder|
         walk(dir) do |file|
-          yielder << file
+          yielder << file unless ignore?(file)
         end
       end
     end
 
     private 
+
+    def ignore?(file)
+      File.basename(file) == '.DS_Store'
+    end
 
     def walk(dir, &block)
       Dir.foreach(dir) do |x|
@@ -24,7 +28,7 @@ module Organizr
         elsif File.directory?(path)
           walk(path, &block)
         else
-          block.call(File.new(path))
+          block.call(path)
         end
       end
     end

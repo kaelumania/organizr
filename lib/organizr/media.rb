@@ -1,17 +1,17 @@
 module Organizr
   class Media
-    attr_reader :file
-    def initialize(file)
-      @file = file
+    attr_reader :path
+    def initialize(path)
+      @path = path
     end
 
-    def path
-      file.path
+    def file
+      File.new(path)
     end
 
     def time
       # TODO check modified vs creation time
-      exif_time || creation_time || modified_time
+      exif_time || modified_time || created_time
     end
 
     def exif_time
@@ -24,6 +24,8 @@ module Organizr
         return EXIFR::TIFF.new(path).date_time
       end
 
+      nil
+    rescue StandardError => e
       nil
     end
 
